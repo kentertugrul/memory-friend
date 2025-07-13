@@ -1,15 +1,16 @@
 {
   "name": "Memory Friend",
   "short_name": "Memory Friend",
-  "description": "Your personal memory assistant that remembers everything",
-  "start_url": "/index.html",
+  "description": "Your personal conversational memory assistant with voice",
+  "start_url": "/",
   "display": "standalone",
   "background_color": "#667eea",
   "theme_color": "#667eea",
-  "orientation": "portrait",
+  "orientation": "portrait-primary",
   "scope": "/",
   "lang": "en",
   "categories": ["productivity", "utilities"],
+  "prefer_related_applications": false,
   "icons": [
     {
       "src": "icons/android-chrome-36x36.png",
