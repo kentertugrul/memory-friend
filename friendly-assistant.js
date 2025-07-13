@@ -16,14 +16,19 @@ class FriendlyAssistant {
     }
 
     initVoice() {
-        // Initialize voice handler if supported
+        // Initialize advanced voice handler if supported
         const support = VoiceHandler.isSupported();
         if (support.speechRecognition || support.speechSynthesis) {
-            this.voiceHandler = new VoiceHandler(this);
+            // Use advanced voice handler for better quality
+            this.voiceHandler = new AdvancedVoiceHandler(this);
             
             if (!support.speechRecognition) {
                 this.addMessage('assistant', 
-                    "Voice input isn't supported in this browser, but I can speak to you! Try Chrome, Edge, or Safari for full voice features. 🎤"
+                    "Voice input isn't supported in this browser, but I can speak to you with AI-powered voices! Try Chrome, Edge, or Safari for full voice features. 🎤"
+                );
+            } else {
+                this.addMessage('assistant', 
+                    "🎤 Voice features are ready! I can now speak with AI-powered natural voices. Check voice settings to enable premium AI voices for ultra-realistic speech! ✨"
                 );
             }
         } else {

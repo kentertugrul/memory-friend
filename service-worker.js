@@ -5,6 +5,7 @@ const urlsToCache = [
   '/styles.css',
   '/friendly-assistant.js',
   '/voice-handler.js',
+  '/advanced-voice-handler.js',
   '/manifest.json',
   '/icons/favicon-16x16.png',
   '/icons/favicon-32x32.png',

@@ -323,6 +323,73 @@ body {
     background: #5a67d8;
 }
 
+.voice-mode-selection {
+    margin: 20px 0;
+    padding: 15px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    background: #f7fafc;
+}
+
+.voice-mode-selection h4 {
+    margin-bottom: 10px;
+    color: #4a5568;
+}
+
+.voice-mode-selection label {
+    display: block;
+    margin: 8px 0;
+    cursor: pointer;
+}
+
+.voice-mode-selection input[type="radio"] {
+    margin-right: 8px;
+}
+
+#aiVoiceSettings, #browserVoiceSettings {
+    margin: 15px 0;
+    padding: 15px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    background: white;
+}
+
+.api-info {
+    margin-top: 15px;
+    padding: 15px;
+    background: #f0f9ff;
+    border-left: 4px solid #0ea5e9;
+    border-radius: 4px;
+}
+
+.api-info p {
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #0c4a6e;
+}
+
+.api-info ul {
+    margin: 0;
+    padding-left: 20px;
+}
+
+.api-info li {
+    margin: 5px 0;
+    color: #0369a1;
+}
+
+#elevenLabsSettings {
+    margin-top: 15px;
+    padding: 10px;
+    background: #f8fafc;
+    border-radius: 6px;
+}
+
+input[type="password"] {
+    font-family: monospace;
+    letter-spacing: 1px;
+}
+
 .suggestions {
     display: flex;
     flex-wrap: wrap;
