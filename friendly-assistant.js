@@ -12,6 +12,25 @@ class FriendlyAssistant {
         this.loadInitialConversation();
         this.updateMemoryPanel();
         this.startPeriodicCheck();
+        this.initVoice();
+    }
+
+    initVoice() {
+        // Initialize voice handler if supported
+        const support = VoiceHandler.isSupported();
+        if (support.speechRecognition || support.speechSynthesis) {
+            this.voiceHandler = new VoiceHandler(this);
+            
+            if (!support.speechRecognition) {
+                this.addMessage('assistant', 
+                    "Voice input isn't supported in this browser, but I can speak to you! Try Chrome, Edge, or Safari for full voice features. 🎤"
+                );
+            }
+        } else {
+            this.addMessage('assistant', 
+                "Voice features aren't supported in this browser. Try Chrome, Edge, or Safari for the full voice experience! 🎤"
+            );
+        }
     }
 
     updateGreeting() {
@@ -384,6 +403,11 @@ Just talk to me naturally - I'll figure out what you need!`);
         this.conversations.push(conversation);
         this.saveData();
         this.displayMessage(role, content, true);
+        
+        // Speak assistant messages if voice is enabled
+        if (role === 'assistant' && this.voiceHandler) {
+            this.voiceHandler.speak(content);
+        }
     }
 
     displayMessage(role, content, animate = true) {
