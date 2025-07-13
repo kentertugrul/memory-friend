@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Icon Generator</title>
+</head>
+<body>
+    <canvas id="iconCanvas" width="1024" height="1024" style="border: 1px solid #ccc;"></canvas>
+    <br><br>
+    <button onclick="generateIcon()">Generate Memory Friend Icon</button>
+    <button onclick="downloadIcon('png')">Download PNG</button>
+    <button onclick="downloadIcon('ico')">Download ICO</button>
+    <br><br>
+    <div id="iconSizes"></div>
+
+    <script>
+        function generateIcon() {
+            const canvas = document.getElementById('iconCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Create gradient background
+            const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+            gradient.addColorStop(0, '#667eea');
+            gradient.addColorStop(1, '#764ba2');
+            
+            // Draw rounded rectangle background
+            const radius = canvas.width * 0.2;
+            ctx.fillStyle = gradient;
+            roundedRect(ctx, 0, 0, canvas.width, canvas.height, radius);
+            ctx.fill();
+            
+            // Draw brain/memory symbol
+            ctx.fillStyle = '#ffffff';
+            ctx.font = `${canvas.width * 0.4}px system-ui, -apple-system, sans-serif`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            
+            // Brain emoji or memory symbol
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            
+            // Draw a stylized brain/memory icon
+            drawMemoryIcon(ctx, centerX, centerY, canvas.width * 0.3);
+            
+            // Add small dots for "remembering"
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+            for (let i = 0; i < 8; i++) {
+                const angle = (i / 8) * Math.PI * 2;
+                const x = centerX + Math.cos(angle) * canvas.width * 0.35;
+                const y = centerY + Math.sin(angle) * canvas.height * 0.35;
+                ctx.beginPath();
+                ctx.arc(x, y, canvas.width * 0.015, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            
+            generateAllSizes();
+        }
+        
+        function drawMemoryIcon(ctx, x, y, size) {
+            // Draw a stylized brain/memory cloud
+            ctx.fillStyle = '#ffffff';
+            
+            // Main cloud shape
+            ctx.beginPath();
+            ctx.arc(x - size * 0.2, y - size * 0.1, size * 0.3, 0, Math.PI * 2);
+            ctx.arc(x + size * 0.2, y - size * 0.1, size * 0.25, 0, Math.PI * 2);
+            ctx.arc(x, y + size * 0.1, size * 0.35, 0, Math.PI * 2);
+            ctx.arc(x - size * 0.3, y + size * 0.2, size * 0.2, 0, Math.PI * 2);
+            ctx.arc(x + size * 0.3, y + size * 0.2, size * 0.2, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Add circuit-like lines inside
+            ctx.strokeStyle = '#667eea';
+            ctx.lineWidth = size * 0.02;
+            ctx.beginPath();
+            ctx.moveTo(x - size * 0.15, y - size * 0.05);
+            ctx.lineTo(x + size * 0.15, y - size * 0.05);
+            ctx.moveTo(x - size * 0.1, y + size * 0.05);
+            ctx.lineTo(x + size * 0.1, y + size * 0.05);
+            ctx.moveTo(x - size * 0.05, y + size * 0.15);
+            ctx.lineTo(x + size * 0.05, y + size * 0.15);
+            ctx.stroke();
+        }
+        
+        function roundedRect(ctx, x, y, width, height, radius) {
+            ctx.beginPath();
+            ctx.moveTo(x + radius, y);
+            ctx.lineTo(x + width - radius, y);
+            ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+            ctx.lineTo(x + width, y + height - radius);
+            ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+            ctx.lineTo(x + radius, y + height);
+            ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+            ctx.lineTo(x, y + radius);
+            ctx.quadraticCurveTo(x, y, x + radius, y);
+            ctx.closePath();
+        }
+        
+        function generateAllSizes() {
+            const sizes = [
+                // Mac sizes
+                { name: 'mac-16', size: 16 },
+                { name: 'mac-32', size: 32 },
+                { name: 'mac-64', size: 64 },
+                { name: 'mac-128', size: 128 },
+                { name: 'mac-256', size: 256 },
+                { name: 'mac-512', size: 512 },
+                
+                // iOS sizes
+                { name: 'ios-29', size: 29 },
+                { name: 'ios-40', size: 40 },
+                { name: 'ios-58', size: 58 },
+                { name: 'ios-60', size: 60 },
+                { name: 'ios-80', size: 80 },
+                { name: 'ios-87', size: 87 },
+                { name: 'ios-120', size: 120 },
+                { name: 'ios-180', size: 180 },
+                { name: 'ios-1024', size: 1024 }
+            ];
+            
+            const container = document.getElementById('iconSizes');
+            container.innerHTML = '<h3>Generated Icons:</h3>';
+            
+            sizes.forEach(({name, size}) => {
+                const smallCanvas = document.createElement('canvas');
+                smallCanvas.width = size;
+                smallCanvas.height = size;
+                smallCanvas.style.border = '1px solid #ccc';
+                smallCanvas.style.margin = '5px';
+                
+                const smallCtx = smallCanvas.getContext('2d');
+                smallCtx.drawImage(document.getElementById('iconCanvas'), 0, 0, size, size);
+                
+                const div = document.createElement('div');
+                div.style.display = 'inline-block';
+                div.style.margin = '10px';
+                div.style.textAlign = 'center';
+                
+                const label = document.createElement('div');
+                label.textContent = `${name} (${size}x${size})`;
+                label.style.fontSize = '12px';
+                label.style.marginBottom = '5px';
+                
+                const downloadBtn = document.createElement('button');
+                downloadBtn.textContent = 'Download';
+                downloadBtn.style.fontSize = '10px';
+                downloadBtn.onclick = () => downloadCanvas(smallCanvas, `memory-friend-${name}.png`);
+                
+                div.appendChild(label);
+                div.appendChild(smallCanvas);
+                div.appendChild(document.createElement('br'));
+                div.appendChild(downloadBtn);
+                
+                container.appendChild(div);
+            });
+        }
+        
+        function downloadCanvas(canvas, filename) {
+            const link = document.createElement('a');
+            link.download = filename;
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+        
+        function downloadIcon(format) {
+            const canvas = document.getElementById('iconCanvas');
+            const filename = `memory-friend-icon.${format}`;
+            downloadCanvas(canvas, filename);
+        }
+        
+        // Generate icon on page load
+        window.onload = generateIcon;
+    </script>
+</body>
+</html>

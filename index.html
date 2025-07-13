@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Memory Friend</title>
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- iOS Web App -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Memory Friend">
+    
+    <!-- Icons for iOS -->
+    <link rel="apple-touch-icon" sizes="60x60" href="icons/apple-touch-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="icons/apple-touch-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="icons/apple-touch-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="icons/apple-touch-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon-180x180.png">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16x16.png">
+    
+    <!-- Web App Manifest -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Theme colors -->
+    <meta name="theme-color" content="#667eea">
+    <meta name="msapplication-TileColor" content="#667eea">
+</head>
+<body>
+    <div class="container">
+        <header class="chat-header">
+            <div class="avatar">🤖</div>
+            <div class="header-content">
+                <h1 id="greeting">Hey there!</h1>
+                <p class="status" id="status">I'm here to remember everything for you</p>
+            </div>
+        </header>
+
+        <section class="chat-window">
+            <div id="conversation" class="conversation">
+                <!-- Dynamic conversation will appear here -->
+            </div>
+        </section>
+
+        <section class="input-area">
+            <form id="chatForm">
+                <input type="text" 
+                       id="chatInput" 
+                       placeholder="Tell me what's on your mind..." 
+                       autocomplete="off"
+                       required>
+                <button type="submit" aria-label="Send">💬</button>
+            </form>
+            <div class="suggestions" id="suggestions">
+                <span class="suggestion-label">Try saying:</span>
+                <button class="suggestion" onclick="handleSuggestion('What should I do today?')">What should I do today?</button>
+                <button class="suggestion" onclick="handleSuggestion('Show me my organized list')">Show organized list</button>
+                <button class="suggestion" onclick="handleSuggestion('Remember I need to...')">Remember I need to...</button>
+                <button class="suggestion" onclick="handleSuggestion('1. Buy groceries 2. Call dentist 3. Pay bills')">Give me a list</button>
+            </div>
+        </section>
+
+        <section class="memory-panel" id="memoryPanel">
+            <h3>Things I'm remembering for you:</h3>
+            <div id="memories" class="memories">
+                <!-- Memories will appear here -->
+            </div>
+        </section>
+
+        <div id="modal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <div id="modalBody"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="friendly-assistant.js"></script>
+    
+    <!-- Service Worker for offline functionality -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then((registration) => {
+                        console.log('SW registered: ', registration);
+                    })
+                    .catch((registrationError) => {
+                        console.log('SW registration failed: ', registrationError);
+                    });
+            });
+        }
+    </script>
+</body>
+</html>
