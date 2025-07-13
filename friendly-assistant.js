@@ -157,6 +157,8 @@ class FriendlyAssistant {
             this.handleHelpRequest();
         } else if (lowerMessage.includes("show") && (lowerMessage.includes("list") || lowerMessage.includes("organize") || lowerMessage.includes("summary"))) {
             this.showOrganizedList();
+        } else if (lowerMessage.includes("priority") || lowerMessage.includes("urgent") || lowerMessage.includes("important")) {
+            this.handlePriorityChange(message);
         } else {
             this.handleGeneralConversation(message);
         }
@@ -453,8 +455,19 @@ Just talk to me naturally - I'll figure out what you need!`);
                 const number = index + 1;
                 
                 memoryDiv.innerHTML = `
-                    <span><strong>${number}.</strong> ${emoji} ${memory.content}</span>
-                    <button onclick="assistant.completeMemory(${memory.id})" title="Mark as done">✓</button>
+                    <div class="memory-content">
+                        <span><strong>${number}.</strong> ${emoji} ${memory.content}</span>
+                    </div>
+                    <div class="memory-actions">
+                        <select class="priority-selector" onchange="assistant.changePriority(${memory.id}, this.value)" title="Change priority">
+                            <option value="1" ${(memory.urgency || 3) === 1 ? 'selected' : ''}>Very Low</option>
+                            <option value="2" ${(memory.urgency || 3) === 2 ? 'selected' : ''}>Low</option>
+                            <option value="3" ${(memory.urgency || 3) === 3 ? 'selected' : ''}>Medium</option>
+                            <option value="4" ${(memory.urgency || 3) === 4 ? 'selected' : ''}>High</option>
+                            <option value="5" ${(memory.urgency || 3) === 5 ? 'selected' : ''}>Critical</option>
+                        </select>
+                        <button onclick="assistant.completeMemory(${memory.id})" title="Mark as done">✓</button>
+                    </div>
                 `;
                 section.appendChild(memoryDiv);
             });
@@ -514,6 +527,121 @@ Just talk to me naturally - I'll figure out what you need!`);
             
             this.addMessage('assistant', responses[Math.floor(Math.random() * responses.length)]);
         }
+    }
+
+    changePriority(id, newUrgency) {
+        const memory = this.memories.find(m => m.id === id);
+        if (memory) {
+            const oldUrgency = memory.urgency || 3;
+            const oldUrgencyText = this.getUrgencyText(oldUrgency);
+            const newUrgencyText = this.getUrgencyText(parseInt(newUrgency));
+            
+            memory.urgency = parseInt(newUrgency);
+            memory.priority = this.urgencyToPriority(parseInt(newUrgency));
+            
+            this.saveData();
+            this.updateMemoryPanel();
+            
+            if (oldUrgency !== parseInt(newUrgency)) {
+                const responses = [
+                    `Updated! "${memory.content}" is now ${newUrgencyText} priority. 🎯`,
+                    `Priority changed! "${memory.content}" moved from ${oldUrgencyText} to ${newUrgencyText}. ⚡`,
+                    `Got it! I've bumped "${memory.content}" to ${newUrgencyText} priority. 🔥`
+                ];
+                
+                this.addMessage('assistant', responses[Math.floor(Math.random() * responses.length)]);
+            }
+        }
+    }
+
+    handlePriorityChange(message) {
+        const lowerMessage = message.toLowerCase();
+        const incompleteMemories = this.memories.filter(m => !m.completed);
+        
+        if (incompleteMemories.length === 0) {
+            this.addMessage('assistant', "You don't have any tasks to change priority for right now!");
+            return;
+        }
+        
+        // Try to detect which task and what priority
+        let targetMemory = null;
+        let newPriority = null;
+        
+        // Look for specific task mentions
+        for (let memory of incompleteMemories) {
+            const memoryWords = memory.content.toLowerCase().split(' ');
+            const messageWords = lowerMessage.split(' ');
+            
+            // Check if any significant words from the memory appear in the message
+            const overlap = memoryWords.filter(word => 
+                word.length > 3 && messageWords.includes(word)
+            );
+            
+            if (overlap.length > 0) {
+                targetMemory = memory;
+                break;
+            }
+        }
+        
+        // Detect priority level
+        if (lowerMessage.includes('critical') || lowerMessage.includes('emergency')) {
+            newPriority = 5;
+        } else if (lowerMessage.includes('high') || lowerMessage.includes('urgent')) {
+            newPriority = 4;
+        } else if (lowerMessage.includes('medium') || lowerMessage.includes('normal')) {
+            newPriority = 3;
+        } else if (lowerMessage.includes('low')) {
+            newPriority = 2;
+        } else if (lowerMessage.includes('very low') || lowerMessage.includes('minimal')) {
+            newPriority = 1;
+        }
+        
+        if (targetMemory && newPriority) {
+            this.changePriority(targetMemory.id, newPriority);
+        } else {
+            // Show interactive priority changer
+            this.showPriorityChangeModal();
+        }
+    }
+
+    showPriorityChangeModal() {
+        const modal = document.getElementById('modal');
+        const modalBody = document.getElementById('modalBody');
+        
+        const incompleteMemories = this.memories.filter(m => !m.completed);
+        
+        modalBody.innerHTML = `
+            <h3>Change Task Priority</h3>
+            <form id="priorityChangeForm">
+                <label>Select task:</label>
+                <select id="taskSelectPriority" required>
+                    ${incompleteMemories.map(m => 
+                        `<option value="${m.id}">${m.content} (Currently: ${this.getUrgencyText(m.urgency || 3)})</option>`
+                    ).join('')}
+                </select>
+                
+                <label>New priority:</label>
+                <select id="newPrioritySelect" required>
+                    <option value="5">Critical - Red</option>
+                    <option value="4">High - Orange</option>
+                    <option value="3" selected>Medium - Yellow</option>
+                    <option value="2">Low - Green</option>
+                    <option value="1">Very Low - Blue</option>
+                </select>
+                
+                <button type="submit">Update Priority</button>
+            </form>
+        `;
+        
+        modal.style.display = 'block';
+        
+        document.getElementById('priorityChangeForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const taskId = parseInt(document.getElementById('taskSelectPriority').value);
+            const newPriority = parseInt(document.getElementById('newPrioritySelect').value);
+            this.changePriority(taskId, newPriority);
+            modal.style.display = 'none';
+        });
     }
 
     showDeletableMemories() {

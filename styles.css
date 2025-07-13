@@ -287,11 +287,71 @@ body {
     align-items: center;
     transition: all 0.3s ease;
     border-left: 4px solid #667eea;
+    gap: 10px;
 }
 
 .memory-item:hover {
     background: #edf2f7;
     transform: translateX(5px);
+}
+
+.memory-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.memory-content span {
+    word-wrap: break-word;
+}
+
+.memory-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.priority-selector {
+    padding: 4px 8px;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    font-size: 12px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 80px;
+}
+
+.priority-selector:hover {
+    border-color: #667eea;
+}
+
+.priority-selector:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
+}
+
+.priority-selector option[value="5"] {
+    color: #e53e3e;
+    font-weight: bold;
+}
+
+.priority-selector option[value="4"] {
+    color: #ff6b35;
+    font-weight: bold;
+}
+
+.priority-selector option[value="3"] {
+    color: #ffa500;
+}
+
+.priority-selector option[value="2"] {
+    color: #32cd32;
+}
+
+.priority-selector option[value="1"] {
+    color: #87ceeb;
 }
 
 .memory-item button {
@@ -304,6 +364,7 @@ body {
     cursor: pointer;
     transition: all 0.3s ease;
     font-size: 16px;
+    flex-shrink: 0;
 }
 
 .memory-item button:hover {
